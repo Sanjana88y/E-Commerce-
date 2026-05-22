@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>E-Commerce Website</title>
+
+  <!-- CSS File Link -->
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <header class="site-header">
+    <div class="brand">
+      <a class="logo" href="#home">My Shop</a>
+      <p class="tagline">Aapki pasandida shopping destination</p>
+    </div>
+    <nav class="nav-links">
+      <a href="#home">Home</a>
+      <a href="#shop">Shop</a>
+      <a href="#contact">Contact</a>
+    </nav>
+    <div class="filter-links" id="categoryFilters">
+      <button type="button" class="filter-btn active" data-category="All">All</button>
+      <button type="button" class="filter-btn" data-category="Men">Men</button>
+      <button type="button" class="filter-btn" data-category="Women">Women</button>
+      <button type="button" class="filter-btn" data-category="Accessories">Accessories</button>
+    </div>
+    <button class="cart-btn" id="cartButton">Cart (<span id="cartCount">0</span>)</button>
+  </header>
+
+  <main>
+    <section class="hero" id="home">
+      <div class="hero-text">
+        <span class="eyebrow">Trending Collection</span>
+        <h1>Aapke favorite products, ab behtar daam par</h1>
+        <p>Shop karein trusted items with matching photos, sahi prices aur easy checkout. Har product par click karke full details dekhein.</p>
+        <button class="hero-button" id="heroShopButton">Shop Now</button>
+      </div>
+      <div class="hero-image">
+        <img src="https://github.com/lifetimecoding/E-commerce-reactjs/blob/main/frontend/src/assets/6.webp?raw=true" alt="Shopping products showcase">
+      </div>
+    </section>
+
+    <section class="featured-products" id="shop">
+      <h2 id="collectionHeading">Our Collection</h2>
+      <div class="products" id="productList"></div>
+    </section>
+
+    <section class="product-detail hidden" id="productDetailView" aria-hidden="true">
+      <button class="back-btn" id="backButton">← Back to Shop</button>
+      <div class="detail-grid">
+        <div class="detail-image-wrapper">
+          <img id="detailImage" src="" alt="Selected product image">
+        </div>
+        <div class="detail-info">
+          <span class="eyebrow">Product Details</span>
+          <h2 id="detailName"></h2>
+          <p class="detail-price" id="detailPrice"></p>
+          <p class="detail-meta" id="detailSize"></p>
+          <p class="detail-meta" id="detailRating"></p>
+          <p class="detail-description" id="detailDescription"></p>
+          <button class="add-cart-btn" id="detailAddCart">Add to Cart</button>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer" id="contact">
+    <div>
+      <h3>My Shop</h3>
+      <p>Quality products, easy shopping, and fast checkout.</p>
+    </div>
+    <p>© 2026 My Shop. All rights reserved.</p>
+  </footer>
+
+  <div class="cart-modal" id="cartModal" aria-hidden="true">
+    <div class="cart-panel">
+      <button class="close-cart" id="closeCart">×</button>
+      <h3>Shopping Cart</h3>
+      <p class="cart-summary">Items in cart: <span id="cartItemCount">0</span></p>
+      <div class="cart-items" id="cartItemList"></div>
+      <div class="cart-footer">
+        <div>
+          <span>Total</span>
+          <strong id="cartTotal">₹0</strong>
+        </div>
+        <button class="checkout-btn" id="checkoutButton">Checkout</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
