@@ -1,3 +1,5 @@
+// This is the list of products that the shop shows on the page.
+// Each object has the details needed to render a product card and detail view.
 const products = [
   {
     id: 1,
@@ -61,15 +63,19 @@ const products = [
   }
 ];
 
-let cartCount = 0;
-let selectedProduct = null;
-let currentCategory = "All";
+// These variables keep track of app state.
+let cartCount = 0; // number of items in the cart
+let selectedProduct = null; // currently viewed product
+let currentCategory = "All"; // current product filter
 
+// Render the products on the page, based on the selected category.
 function displayProducts(category = currentCategory) {
   currentCategory = category;
   const productList = document.getElementById("productList");
   productList.innerHTML = "";
 
+  // Use the category filter to choose which products to show.
+  // If category is "All" we show every product, otherwise we use filter().
   const filteredProducts = category === "All"
     ? products
     : products.filter(product => product.category === category);
@@ -78,10 +84,12 @@ function displayProducts(category = currentCategory) {
   heading.innerText = category === "All" ? "Our Collection" : `${category} Collection`;
 
   if (filteredProducts.length === 0) {
+    // If no products match the selected category, show a friendly message.
     productList.innerHTML = `<p class="no-products">No products found in ${category}.</p>`;
     return;
   }
 
+  // Loop over filtered products and create a card for each one.
   filteredProducts.forEach(product => {
     const card = document.createElement("div");
     card.classList.add("card");
@@ -105,18 +113,22 @@ function displayProducts(category = currentCategory) {
   });
 }
 
+// Change which category is active and re-render products.
 function setCategoryFilter(category) {
   currentCategory = category;
   document.querySelectorAll(".filter-btn").forEach(button => {
+    // Toggle the active class on buttons so the UI shows the selected filter.
     button.classList.toggle("active", button.dataset.category === category);
   });
   displayProducts(category);
 }
 
+// Show the product detail section for the clicked item.
 function openProductDetail(productId) {
   selectedProduct = products.find(item => item.id === productId);
-  if (!selectedProduct) return;
+  if (!selectedProduct) return; // If the product ID was invalid, do nothing.
 
+  // Fill the detail view with the selected product's data.
   document.getElementById("detailImage").src = selectedProduct.img;
   document.getElementById("detailImage").alt = selectedProduct.name;
   document.getElementById("detailName").innerText = selectedProduct.name;
@@ -139,8 +151,22 @@ function closeProductDetail() {
   document.querySelector(".hero").classList.remove("hidden");
 }
 
+// This array keeps track of items that are currently in the cart.
 const cartItems = [];
 
+let toastTimer = null;
+// Show a small toast message at the bottom of the page.
+function showToast(message) {
+  const toast = document.getElementById("toast");
+  toast.textContent = message;
+  toast.classList.add("show");
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => {
+    toast.classList.remove("show");
+  }, 2000);
+}
+
+// Update the cart count number shown in the header.
 function updateCartCount() {
   document.getElementById("cartCount").innerText = cartCount;
 }
@@ -151,8 +177,10 @@ function updateCartList() {
   let total = 0;
 
   if (cartItems.length === 0) {
-    cartList.innerHTML = "<p class='empty-cart'>Aapka cart abhi khali hai.</p>";
+    // Show a message when the cart has no items.
+    cartList.innerHTML = "<p class='empty-cart'>Your cart is empty.</p>";
   } else {
+    // Loop over each item in the cart and render it in the cart list.
     cartItems.forEach(item => {
       const itemCard = document.createElement("div");
       itemCard.className = "cart-item";
@@ -170,6 +198,7 @@ function updateCartList() {
       total += item.price * item.quantity;
     });
 
+    // Add click listeners to each remove button after the items are in the DOM.
     cartList.querySelectorAll(".cart-remove-btn").forEach(button => {
       button.addEventListener("click", event => {
         const itemId = Number(event.target.dataset.id);
@@ -182,19 +211,24 @@ function updateCartList() {
   document.getElementById("cartItemCount").innerText = cartCount;
 }
 
+// Add a product to the cart and update the display.
 function addToCartItem(product) {
   cartCount += 1;
   const existing = cartItems.find(item => item.id === product.id);
   if (existing) {
+    // If the product is already in the cart, increase its quantity.
     existing.quantity += 1;
   } else {
+    // Otherwise, add a new cart item with quantity 1.
     cartItems.push({ ...product, quantity: 1 });
   }
 
   updateCartCount();
   updateCartList();
+  showToast(`${product.name} added to cart ✓`);
 }
 
+// Remove one quantity of an item from the cart.
 function removeCartItem(itemId) {
   const itemIndex = cartItems.findIndex(item => item.id === itemId);
   if (itemIndex === -1) return;
@@ -203,8 +237,10 @@ function removeCartItem(itemId) {
   cartCount -= 1;
 
   if (item.quantity > 1) {
+    // If there is more than one of this item, just decrease quantity.
     item.quantity -= 1;
   } else {
+    // If it was the last one, remove the item completely.
     cartItems.splice(itemIndex, 1);
   }
 
@@ -212,16 +248,18 @@ function removeCartItem(itemId) {
   updateCartList();
 }
 
+// Handle checkout: empty the cart and show a confirmation message.
 function checkoutCart() {
-  if (cartItems.length === 0) return;
+  if (cartItems.length === 0) return; // Do nothing if cart is already empty.
   cartItems.length = 0;
   cartCount = 0;
   updateCartCount();
   updateCartList();
   closeCart();
-  alert("Checkout successful!\nAapka order receive kiya gaya hai.");
+  showToast("Order placed successfully! 🎉");
 }
 
+// Open the cart modal and prevent page scrolling while it is open.
 function openCart() {
   updateCartList();
   document.getElementById("cartModal").classList.add("open");
@@ -229,14 +267,18 @@ function openCart() {
   document.body.classList.add("no-scroll");
 }
 
+// Close the cart modal and restore page scrolling.
 function closeCart() {
   document.getElementById("cartModal").classList.remove("open");
   document.getElementById("cartModal").setAttribute("aria-hidden", "true");
   document.body.classList.remove("no-scroll");
 }
 
+// Attach all event listeners after the page has loaded.
 function setupEvents() {
+  // Clicking the back button returns the user to the main shop view.
   document.getElementById("backButton").addEventListener("click", closeProductDetail);
+  // Clicking the Add to Cart button in the detail view adds the selected product.
   document.getElementById("detailAddCart").addEventListener("click", () => {
     if (!selectedProduct) return;
     addToCartItem(selectedProduct);
@@ -245,14 +287,17 @@ function setupEvents() {
   document.getElementById("cartButton").addEventListener("click", openCart);
   document.getElementById("closeCart").addEventListener("click", closeCart);
   document.getElementById("checkoutButton").addEventListener("click", checkoutCart);
+  // Clicking outside the cart panel, on the modal background, closes the cart.
   document.getElementById("cartModal").addEventListener("click", event => {
     if (event.target.id === "cartModal") {
       closeCart();
     }
   });
+  // For each category button, set the filter based on its data-category attribute.
   document.querySelectorAll(".filter-btn").forEach(button => {
     button.addEventListener("click", () => setCategoryFilter(button.dataset.category));
   });
+  // Smoothly scroll down to the shop section when the hero button is clicked.
   document.getElementById("heroShopButton").addEventListener("click", () => {
     document.getElementById("shop").scrollIntoView({ behavior: "smooth" });
   });
